@@ -282,18 +282,19 @@
 - (void)openInCordovaWebView:(NSURL*)url withOptions:(NSString*)options
 {
     NSURLRequest* request = [NSURLRequest requestWithURL:url];
+    [self openInInAppBrowser:url withOptions:options];
 
-#ifdef __CORDOVA_4_0_0
-    // the webview engine itself will filter for this according to <allow-navigation> policy
-    // in config.xml for cordova-ios-4.0
-    [self.webViewEngine loadRequest:request];
-#else
-    if ([self.commandDelegate URLIsWhitelisted:url]) {
-        [self.webView loadRequest:request];
-    } else { // this assumes the InAppBrowser can be excepted from the white-list
-        [self openInInAppBrowser:url withOptions:options];
-    }
-#endif
+//#ifdef __CORDOVA_4_0_0
+//    // the webview engine itself will filter for this according to <allow-navigation> policy
+//    // in config.xml for cordova-ios-4.0
+//    [self.webViewEngine loadRequest:request];
+//#else
+//    if ([self.commandDelegate URLIsWhitelisted:url]) {
+//        [self.webView loadRequest:request];
+//    } else { // this assumes the InAppBrowser can be excepted from the white-list
+//        [self openInInAppBrowser:url withOptions:options];
+//    }
+//#endif
 }
 
 - (void)openInSystem:(NSURL*)url
@@ -595,7 +596,7 @@
     self.toolbar.alpha = 1.000;
     self.toolbar.autoresizesSubviews = YES;
     self.toolbar.autoresizingMask = toolbarIsAtBottom ? (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin) : UIViewAutoresizingFlexibleWidth;
-    self.toolbar.barStyle = UIBarStyleBlackOpaque;
+    self.toolbar.barStyle = UIBarStyleDefault;
     self.toolbar.clearsContextBeforeDrawing = NO;
     self.toolbar.clipsToBounds = NO;
     self.toolbar.contentMode = UIViewContentModeScaleToFill;
@@ -665,7 +666,7 @@
       [self.toolbar setItems:@[self.closeButton, flexibleSpaceButton, self.backButton, fixedSpaceButton, self.forwardButton]];
     }
 
-    self.view.backgroundColor = [UIColor grayColor];
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.toolbar];
     [self.view addSubview:self.addressLabel];
     [self.view addSubview:self.spinner];
@@ -921,6 +922,8 @@
 {
     // loading url, start spinner, update back/forward
 
+    theWebView.scalesPageToFit = YES;
+    self.addressLabel.textColor = UIColor.grayColor;
     self.addressLabel.text = NSLocalizedString(@"Loading...", nil);
     self.backButton.enabled = theWebView.canGoBack;
     self.forwardButton.enabled = theWebView.canGoForward;
@@ -1150,3 +1153,4 @@
 
 
 @end
+
