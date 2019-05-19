@@ -1061,6 +1061,10 @@ public class InAppBrowser extends CordovaPlugin {
          */
         @Override
         public boolean shouldOverrideUrlLoading(WebView webView, String url) {
+            if (url.equalsIgnoreCase("gap-iab://close()")){
+                closeDialog();
+                return true;
+            }
             if (url.startsWith(WebView.SCHEME_TEL)) {
                 try {
                     Intent intent = new Intent(Intent.ACTION_DIAL);

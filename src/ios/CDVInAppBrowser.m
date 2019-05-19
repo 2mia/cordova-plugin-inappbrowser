@@ -417,6 +417,11 @@
     // and the path, if present, should be a JSON-encoded value to pass to the callback.
     if ([[url scheme] isEqualToString:@"gap-iab"]) {
         NSString* scriptCallbackId = [url host];
+        if ([scriptCallbackId caseInsensitiveCompare:@"close()"] == NSOrderedSame ){
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self close:nil];
+            });
+        }
         CDVPluginResult* pluginResult = nil;
 
         if ([self isValidCallbackId:scriptCallbackId]) {
@@ -538,7 +543,13 @@
 
 // Prevent crashes on closing windows
 -(void)dealloc {
-   self.webView.delegate = nil;
+   
+    self.webView.delegate = nil;
+#if ! __has_feature(objc_arc)
+    [_webViewDelegate dealloc];
+    [self.webView dealloc];
+#endif
+
 }
 
 - (void)createViews
@@ -1154,4 +1165,5 @@
 
 
 @end
+
 
